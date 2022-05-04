@@ -12,8 +12,14 @@ class BookingsListWidget extends GetView<BookingsController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.bookings.isEmpty) {
+      if (controller.isLoading.isTrue) {
         return CircularLoadingWidget(height: 300);
+      } else if (controller.bookings.isEmpty) {
+        return Center(
+            child: Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: Text("No Data"),
+        ));
       } else {
         return ListView.builder(
           padding: EdgeInsets.only(bottom: 10, top: 10),
