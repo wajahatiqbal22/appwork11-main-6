@@ -1,0 +1,132 @@
+/*
+ * Copyright (c) 2020 .
+ */
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../../common/ui.dart';
+
+class TextFieldWidget extends StatelessWidget {
+  const TextFieldWidget({
+    Key? key,
+    this.onSaved,
+    this.onChanged,
+    this.validator,
+    this.keyboardType,
+    this.initialValue,
+    this.hintText,
+    this.errorText,
+    this.iconData,
+    this.labelText,
+    this.obscureText,
+    this.suffixIcon,
+    this.isFirst,
+    this.isLast,
+    this.isEnabled,
+    this.style,
+    this.textAlign,
+    this.suffix, this.readOnly, this.onTap, this.controller,
+  }) : super(key: key);
+
+  final FormFieldSetter<String>? onSaved;
+  final ValueChanged<String>? onChanged;
+  final FormFieldValidator<String>? validator;
+  final TextInputType? keyboardType;
+  final String? initialValue;
+  final String? hintText;
+  final String? errorText;
+  final TextAlign? textAlign;
+  final String? labelText;
+  final TextStyle? style;
+  final IconData? iconData;
+  final bool? obscureText;
+  final bool? isFirst;
+  final bool? isLast;
+  final Widget? suffixIcon;
+  final Widget? suffix;
+  final bool? isEnabled;
+  final bool? readOnly;
+  final void Function()? onTap;
+  final  TextEditingController? controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: 2, bottom: 2, left: 20, right: 20),
+      margin: EdgeInsets.only(left: 20, right: 20, top: topMargin, bottom: bottomMargin),
+      decoration: BoxDecoration(
+          color: Get.theme.primaryColor,
+          borderRadius: buildBorderRadius,
+          boxShadow: [
+            BoxShadow(color: Get.theme.focusColor.withOpacity(0.1), blurRadius: 10, offset: Offset(0, 5)),
+          ],
+          border: Border.all(color: Get.theme.focusColor.withOpacity(0.05))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            labelText ?? "",
+            style: Get.textTheme.bodyText1,
+            textAlign: textAlign ?? TextAlign.start,
+          ),
+          TextFormField(
+            controller: controller,
+            keyboardType: keyboardType ?? TextInputType.text,
+            onSaved: onSaved,
+            onChanged: onChanged,
+            validator: validator,
+            enabled: isEnabled ?? true,
+            initialValue: controller != null ? null : initialValue ?? '',
+            style: style ?? Get.textTheme.bodyText2,
+            obscureText: obscureText ?? false,
+            textAlign: textAlign ?? TextAlign.start,
+            onTap: onTap,
+          readOnly: readOnly ?? false,
+            decoration: Ui.getInputDecoration(
+              hintText: hintText ?? '',
+              iconData: iconData,
+              suffixIcon: suffixIcon,
+              suffix: suffix??Container(width: 0,),
+              errorText: errorText??"",
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  BorderRadius get buildBorderRadius {
+    if (isFirst != null && isFirst!) {
+      return BorderRadius.vertical(top: Radius.circular(10));
+    }
+    if (isLast != null && isLast!) {
+      return BorderRadius.vertical(bottom: Radius.circular(10));
+    }
+    if (isFirst != null && !isFirst! && isLast != null && !isLast!) {
+      return BorderRadius.all(Radius.circular(0));
+    }
+    return BorderRadius.all(Radius.circular(10));
+  }
+
+  double get topMargin {
+    if ((isFirst != null && isFirst!)) {
+      return 5;
+    } else if (isFirst == null) {
+      return 5;
+    } else {
+      return 0;
+    }
+  }
+
+  double get bottomMargin {
+    if ((isLast != null && isLast!)) {
+      return 5;
+    } else if (isLast == null) {
+      return 5;
+    } else {
+      return 0;
+    }
+  }
+}
