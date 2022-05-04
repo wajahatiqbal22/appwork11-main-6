@@ -38,7 +38,8 @@ class MessagesView extends GetView<MessagesController> {
                   return MessageItemWidget(
                     message: controller.messages.elementAt(index),
                     onDismissed: (conversation) async {
-                      await controller.deleteMessage(controller.messages.elementAt(index));
+                      await controller
+                          .deleteMessage(controller.messages.elementAt(index));
                     },
                   );
                 }

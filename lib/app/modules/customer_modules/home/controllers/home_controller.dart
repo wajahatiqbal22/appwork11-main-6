@@ -23,6 +23,7 @@ class HomeController extends GetxController {
 
   final eServices = <EService>[].obs;
   final categories = <Category>[].obs;
+  final homeCategories = <Category>[].obs;
   final featured = <Category>[].obs;
 
   HomeController() {
@@ -38,17 +39,18 @@ class HomeController extends GetxController {
   }
 
   Future refreshHome({bool showMessage = false}) async {
-    try{
+    try {
       await getSlider();
       await getCategories();
       await getFeatured();
       await getRecommendedEServices();
       Get.find<RootController>().getNotificationsCount();
-    }catch(e){
+    } catch (e) {
       print(e);
     }
     if (showMessage) {
-      Get.showSnackbar(Ui.SuccessSnackBar(message: "Home page refreshed successfully".tr));
+      Get.showSnackbar(
+          Ui.SuccessSnackBar(message: "Home page refreshed successfully".tr));
     }
   }
 
@@ -67,6 +69,9 @@ class HomeController extends GetxController {
   Future getCategories() async {
     try {
       categories.assignAll(await _categoryRepository.getAllParents());
+      for (int i = 0; i <= 7; i++) {
+        homeCategories.add(categories[i]);
+      }
     } catch (e) {
       Get.showSnackbar(Ui.ErrorSnackBar(message: e.toString()));
     }

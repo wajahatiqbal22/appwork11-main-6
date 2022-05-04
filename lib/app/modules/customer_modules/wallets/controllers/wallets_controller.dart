@@ -11,6 +11,7 @@ class WalletsController extends GetxController {
   final walletTransactions = <WalletTransaction>[].obs;
   final selectedWallet = new Wallet().obs;
   late PaymentRepository _paymentRepository;
+  final isLoading = true.obs;
 
   WalletsController() {
     _paymentRepository = new PaymentRepository(Get.find<CustomerApiClient>());
@@ -23,11 +24,14 @@ class WalletsController extends GetxController {
   }
 
   Future refreshWallets({bool? showMessage}) async {
+    isLoading.value = true;
     await getWallets();
     initSelectedWallet();
     await getWalletTransactions();
+    isLoading.value = false;
     if (showMessage == true) {
-      Get.showSnackbar(Ui.SuccessSnackBar(message: "List of wallets refreshed successfully".tr));
+      Get.showSnackbar(Ui.SuccessSnackBar(
+          message: "List of wallets refreshed successfully".tr));
     }
   }
 
@@ -41,7 +45,8 @@ class WalletsController extends GetxController {
 
   Future getWalletTransactions() async {
     try {
-      walletTransactions.assignAll(await _paymentRepository.getWalletTransactions(selectedWallet.value));
+      walletTransactions.assignAll(
+          await _paymentRepository.getWalletTransactions(selectedWallet.value));
     } catch (e) {
       Get.showSnackbar(Ui.ErrorSnackBar(message: e.toString()));
     }

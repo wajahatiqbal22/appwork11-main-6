@@ -22,7 +22,7 @@ class CategoriesCarouselWidget extends GetWidget<HomeController> {
               crossAxisCount: 4,
             ),
             //scrollDirection: Axis.horizontal,
-            itemCount: controller.categories.length,
+            itemCount: controller.homeCategories.length,
             itemBuilder: (_, index) {
               var _category = controller.categories.elementAt(index);
               return InkWell(
@@ -34,22 +34,25 @@ class CategoriesCarouselWidget extends GetWidget<HomeController> {
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                        child: (_category.image!.url!.toLowerCase().endsWith('.svg')
+                        child: (_category.image!.url!
+                                .toLowerCase()
+                                .endsWith('.svg')
                             ? SvgPicture.network(
-                          _category.image!.url!,
-                          color: _category.color,
-                        )
+                                _category.image!.url!,
+                                color: _category.color,
+                              )
                             : CachedNetworkImage(
-                          height: 40,
-                          width:40,
-                          //   fit: BoxFit.fitWidth,
-                          imageUrl: _category.image!.url!,
-                          placeholder: (context, url) => Image.asset(
-                            'assets/img/loading.gif',
-                            fit: BoxFit.cover,
-                          ),
-                          errorWidget: (context, url, error) => Icon(Icons.error_outline),
-                        )),
+                                height: 40,
+                                width: 40,
+                                //   fit: BoxFit.fitWidth,
+                                imageUrl: _category.image!.url!,
+                                placeholder: (context, url) => Image.asset(
+                                  'assets/img/loading.gif',
+                                  fit: BoxFit.cover,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error_outline),
+                              )),
                       ),
                     ),
                     SizedBox(height: 5),

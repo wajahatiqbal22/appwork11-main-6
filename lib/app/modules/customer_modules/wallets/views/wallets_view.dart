@@ -49,8 +49,10 @@ class WalletsView extends GetView<WalletsController> {
                   Container(
                     height: 190,
                     child: Obx(() {
-                      if (controller.wallets.isEmpty) {
+                      if (controller.isLoading.isTrue) {
                         return WalletsLoadingListWidget();
+                      } else if (controller.wallets.isEmpty) {
+                        return Center(child: Text("No Wallets Linked"));
                       }
                       return ListView.builder(
                           primary: false,
@@ -73,25 +75,36 @@ class WalletsView extends GetView<WalletsController> {
                                 await controller.getWalletTransactions();
                               },
                               onEdit: (wallet) async {
-                                await Get.offAndToNamed(Routes.WALLET_FORM, arguments: {'wallet': wallet});
+                                await Get.offAndToNamed(Routes.WALLET_FORM,
+                                    arguments: {'wallet': wallet});
                               },
                             );
                           });
                     }),
                   ),
-                  Text("Wallet Transactions".tr, style: Get.textTheme.headline5).paddingOnly(top: 25, bottom: 10, right: 22, left: 22),
+                  Text("Wallet Transactions".tr, style: Get.textTheme.headline5)
+                      .paddingOnly(top: 25, bottom: 10, right: 22, left: 22),
                   Obx(() {
-                    if (controller.walletTransactions.isEmpty) {
+                    if (controller.isLoading.isTrue) {
                       return WalletTransactionsLoadingListWidget();
+                    } else if (controller.walletTransactions.isEmpty) {
+                      return Center(
+                          child: Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Text("No Transactions"),
+                      ));
                     }
                     return ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
                         primary: false,
                         shrinkWrap: true,
                         itemCount: controller.walletTransactions.length,
                         itemBuilder: (_, index) {
-                          WalletTransaction _transaction = controller.walletTransactions.elementAt(index);
-                          return WalletTransactionItem(transaction: _transaction);
+                          WalletTransaction _transaction =
+                              controller.walletTransactions.elementAt(index);
+                          return WalletTransactionItem(
+                              transaction: _transaction);
                         });
                   }),
                 ],

@@ -61,5 +61,5 @@ abstract class UserRepository {
     return digest.toString();
   }
 
-  Future signOut();
+  Future<void> signOut();
 }

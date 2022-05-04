@@ -79,7 +79,7 @@ class FirebaseProvider extends GetxService {
     );
   }
 
-  Future signOut() async {
-    return await _auth.signOut();
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }

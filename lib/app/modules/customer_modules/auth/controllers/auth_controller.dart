@@ -20,14 +20,14 @@ import '../../root/controllers/root_controller.dart';
 
 class AuthController extends GetxController {
   final Rx<User> currentUser = Get.find<AuthService>().user;
-  GlobalKey<FormState> loginFormKey= GlobalKey<FormState>();
-  GlobalKey<FormState> registerFormKey= GlobalKey<FormState>();
-  GlobalKey<FormState> phoneFormKey= GlobalKey<FormState>();
-  GlobalKey<FormState> forgotPasswordFormKey= GlobalKey<FormState>();
+  GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> phoneFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> forgotPasswordFormKey = GlobalKey<FormState>();
   final hidePassword = true.obs;
   final loading = false.obs;
   final smsSent = ''.obs;
-  UserRepository _userRepository=CustomerUserRepository();
+  UserRepository _userRepository = CustomerUserRepository();
 
   AuthController() {
     _userRepository = CustomerUserRepository();
@@ -47,10 +47,12 @@ class AuthController extends GetxController {
         await Get.offAndToNamed(Routes.ROOT, arguments: 0);
       } catch (e) {
         print(e);
-        Get.showSnackbar(Ui.ErrorSnackBar(message:
-            e.toString().contains("These credentials do not match our records")?
-        "Please enter a valid credentials":e.toString()
-        ));
+        Get.showSnackbar(Ui.ErrorSnackBar(
+            message: e
+                    .toString()
+                    .contains("These credentials do not match our records")
+                ? "Please enter a valid credentials"
+                : e.toString()));
       } finally {
         loading.value = false;
       }
@@ -77,15 +79,14 @@ class AuthController extends GetxController {
   void signInWithFacebook() async {
     loading.value = true;
     await Get.find<FireBaseMessagingService>().setDeviceToken();
-    final credential =                await _userRepository.signInWithFacebook();
+    final credential = await _userRepository.signInWithFacebook();
 
     currentUser.value =
-    await _userRepository.login(User.fromUserCredential(credential));
+        await _userRepository.login(User.fromUserCredential(credential));
     Get.find<SettingsService>().setUserType(true);
     await Get.offAndToNamed(Routes.ROOT, arguments: 0);
 
-    try {
-    } catch (e) {
+    try {} catch (e) {
       print(e);
       Get.showSnackbar(Ui.ErrorSnackBar(message: e.toString()));
     } finally {
@@ -98,7 +99,7 @@ class AuthController extends GetxController {
     try {
       await Get.find<FireBaseMessagingService>().setDeviceToken();
       final credential = await _userRepository.signInWithGoogle();
-      currentUser.value.phoneNumber="";
+      currentUser.value.phoneNumber = "";
 /*
     currentUser.value =
     await _userRepository.register(User.fromUserCredential(credential));
@@ -122,8 +123,7 @@ class AuthController extends GetxController {
     try {
       await Get.find<FireBaseMessagingService>().setDeviceToken();
       final credential = await _userRepository.signInWithFacebook();
-      if(credential.user!.email.toString()=="null")
-      {
+      if (credential.user!.email.toString() == "null") {
         throw ApiException("Unable to get your email");
       }
       sociallogin(credential, Get.context!);
@@ -205,39 +205,40 @@ class AuthController extends GetxController {
       loading.value = false;
       await Get.toNamed(Routes.LOGIN);
     } catch (e) {
-       loading.value = false;
-       print("invalid is here");
-       if(e.toString().contains("The verification ID used to create the phone auth credential is invalid")
-           ||
-           e.toString().contains("The sms verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user")
-       ){
-       }
-      else if(e.toString().contains("The email has already been taken")
-       ){
-         await Get.find<AuthService>().removeCurrentUser();
-         Get.back();
-       }
-       else{
-         Get.back();
-       }
-       Get.showSnackbar(Ui.ErrorSnackBar(message:
-       (e.toString().contains("The verification ID used to create the phone auth credential is invalid")
-           ||
-           e.toString().contains("The sms verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user")
-       )
-           ?"Please enter valid code":
-       (e.toString().contains("The email has already been taken")
-       && e.toString().contains("The phone number has already been taken")
-       )?
-       "Email and Phone number already registered":
-       e.toString().contains("The email has already been taken")?
-       "Email already registered":
-       e.toString().contains("The phone number has already been taken")?
-       "Phone number already registered":
-       e.toString().contains("firebase")?
-       e.toString().replaceRange(0, 14, '').split(']')[1]:
-       e.toString()
-       ));
+      loading.value = false;
+      print("invalid is here");
+      if (e.toString().contains(
+              "The verification ID used to create the phone auth credential is invalid") ||
+          e.toString().contains(
+              "The sms verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user")) {
+      } else if (e.toString().contains("The email has already been taken")) {
+        await Get.find<AuthService>().removeCurrentUser();
+        Get.back();
+      } else {
+        Get.back();
+      }
+      Get.showSnackbar(Ui.ErrorSnackBar(
+          message: (e.toString().contains(
+                      "The verification ID used to create the phone auth credential is invalid") ||
+                  e.toString().contains(
+                      "The sms verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user"))
+              ? "Please enter valid code"
+              : (e.toString().contains("The email has already been taken") &&
+                      e
+                          .toString()
+                          .contains("The phone number has already been taken"))
+                  ? "Email and Phone number already registered"
+                  : e.toString().contains("The email has already been taken")
+                      ? "Email already registered"
+                      : e.toString().contains(
+                              "The phone number has already been taken")
+                          ? "Phone number already registered"
+                          : e.toString().contains("firebase")
+                              ? e
+                                  .toString()
+                                  .replaceRange(0, 14, '')
+                                  .split(']')[1]
+                              : e.toString()));
     }
   }
 
@@ -268,19 +269,21 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> sociallogin(usernew,context) async {
+  Future<void> sociallogin(usernew, context) async {
     loading.value = true;
-    CollectionReference emailsRef = FirebaseFirestore.instance.collection('users');
+    CollectionReference emailsRef =
+        FirebaseFirestore.instance.collection('users');
 
-    DocumentSnapshot emailsSnap=await emailsRef.doc("data").get();
-    List<dynamic> emails=[];
-    if(emailsSnap.exists)
-      {
-        emails=emailsSnap["emails"]??[];
-      }
+    DocumentSnapshot emailsSnap = await emailsRef.doc("data").get();
+    List<dynamic> emails = [];
+    if (emailsSnap.exists) {
+      emails = emailsSnap["emails"] ?? [];
+    }
 
-    if(!emails.contains(usernew.user.email)){
-      FirebaseFirestore.instance.collection("users").doc("data").update({"emails": FieldValue.arrayUnion([usernew.user.email])});
+    if (!emails.contains(usernew.user.email)) {
+      FirebaseFirestore.instance.collection("users").doc("data").update({
+        "emails": FieldValue.arrayUnion([usernew.user.email])
+      });
       showModalBottomSheet(
           context: context,
           builder: (context) {
@@ -288,7 +291,7 @@ class AuthController extends GetxController {
               child: Padding(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
-                child:SingleChildScrollView(
+                child: SingleChildScrollView(
                   child: Container(
                     child: Form(
                       key: phoneFormKey,
@@ -302,14 +305,15 @@ class AuthController extends GetxController {
                               if (input!.startsWith("00")) {
                                 input = "+" + input.substring(2);
                               }
-                              currentUser.value=User.fromUserCredential(usernew);
+                              currentUser.value =
+                                  User.fromUserCredential(usernew);
                               currentUser.value.phoneNumber = input;
                               print("user number is:$input}");
                               print(currentUser.value.phoneNumber);
                             },
                             validator: (input) {
                               return !input!.startsWith('\+') &&
-                                  !input.startsWith('00')
+                                      !input.startsWith('00')
                                   ? "Should be valid mobile number with country code"
                                   : null;
                             },
@@ -329,20 +333,25 @@ class AuthController extends GetxController {
                                     child: BlockButtonWidget(
                                       onPressed: () async {
                                         try {
-                                          if(phoneFormKey.currentState!.validate())
-                                            {
-                                              phoneFormKey.currentState!.save();
-                                              print(Get.find<AuthService>().user.value.phoneNumber!);
-                                              Navigator.pop(context);
-                                              await _userRepository.sendCodeToPhone();
-                                              loading.value = false;
-                                              await Get.toNamed(Routes.PHONE_VERIFICATION);
-                                            }
-
+                                          if (phoneFormKey.currentState!
+                                              .validate()) {
+                                            phoneFormKey.currentState!.save();
+                                            print(Get.find<AuthService>()
+                                                .user
+                                                .value
+                                                .phoneNumber!);
+                                            Navigator.pop(context);
+                                            await _userRepository
+                                                .sendCodeToPhone();
+                                            loading.value = false;
+                                            await Get.toNamed(
+                                                Routes.PHONE_VERIFICATION);
+                                          }
                                         } catch (e) {
                                           print("error 11");
                                           print(e);
-                                          Get.showSnackbar(Ui.ErrorSnackBar(message: e.toString()));
+                                          Get.showSnackbar(Ui.ErrorSnackBar(
+                                              message: e.toString()));
                                         } finally {
                                           loading.value = false;
                                         }
@@ -350,11 +359,16 @@ class AuthController extends GetxController {
                                       color: Get.theme.accentColor,
                                       text: Text(
                                         "Complete".tr,
-                                        style: Get.textTheme.headline6!.merge(TextStyle(color: Get.theme.primaryColor)),
+                                        style: Get.textTheme.headline6!.merge(
+                                            TextStyle(
+                                                color: Get.theme.primaryColor)),
                                       ),
-                                    ).paddingOnly(top: 15, bottom: 5, right: 20, left: 20),
+                                    ).paddingOnly(
+                                        top: 15,
+                                        bottom: 5,
+                                        right: 20,
+                                        left: 20),
                                   ),
-
                                 ],
                               ),
                             ],
@@ -367,16 +381,16 @@ class AuthController extends GetxController {
               ),
             );
           }).whenComplete(() {
-            print("bottomsheet closed");
+        print("bottomsheet closed");
       }).onError((error, stackTrace) {
         print("closed on error");
       });
-    }else{
+    } else {
       // Get.focusScope.unfocus();
       try {
         loading.value = true;
         var newuser = firebaseUser.FirebaseAuth.instance.currentUser;
-        var user =User(
+        var user = User(
             name: newuser!.displayName,
             phoneNumber: newuser.phoneNumber,
             email: newuser.email,
@@ -386,16 +400,14 @@ class AuthController extends GetxController {
             avatar: Media(
               url: newuser.photoURL,
               thumb: newuser.photoURL,
-            )
-        );
+            ));
         currentUser.value = await _userRepository.login(user);
         await Get.find<RootController>().changePage(0);
       } catch (e) {
         loading.value = true;
-        print("user login error "+e.toString());
-        if(e.toString().contains("The email has already been taken")){
+        print("user login error " + e.toString());
+        if (e.toString().contains("The email has already been taken")) {
           // login();
-
 
         }
       }

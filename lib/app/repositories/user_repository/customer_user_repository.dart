@@ -89,13 +89,13 @@ class CustomerUserRepository extends UserRepository {
     }
   }
 
-  Future signOut() async {
+  Future<void> signOut() async {
     try {
       _firebaseProvider = Get.find<FirebaseProvider>();
       await GoogleSignIn().signOut();
       await FacebookAuth.instance.logOut();
 
-      return await _firebaseProvider!.signOut();
+      await _firebaseProvider!.signOut();
     } on ApiException catch (e) {
       throw e.message;
     }

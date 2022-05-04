@@ -13,7 +13,7 @@ import 'app/services/firebase_messaging_service.dart';
 import 'app/services/global_service.dart';
 import 'app/services/settings_service.dart';
 import 'app/services/translation_service.dart';
-    
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.log('starting services ...');
@@ -31,7 +31,7 @@ void main() async {
   Get.log('All services started...');
   DynamicLinkService.handleDynamicLinks();
   runApp(
-      GetMaterialApp(
+    GetMaterialApp(
         title: Get.find<SettingsService>().setting.value.appName,
         initialRoute: _settingService.isConsumer()
             ? Theme1AppPages.INITIAL

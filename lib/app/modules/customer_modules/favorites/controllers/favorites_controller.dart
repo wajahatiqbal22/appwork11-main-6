@@ -7,6 +7,7 @@ import '../../../../repositories/e_service_repository.dart';
 
 class FavoritesController extends GetxController {
   final favorites = <Favorite>[].obs;
+  final isLoading = true.obs;
   late EServiceRepository _eServiceRepository;
 
   FavoritesController() {
@@ -15,20 +16,27 @@ class FavoritesController extends GetxController {
 
   @override
   void onInit() async {
+    isLoading.value = true;
     await refreshFavorites();
+    isLoading.value = false;
     super.onInit();
   }
 
   Future refreshFavorites({bool? showMessage}) async {
+    isLoading.value = true;
     await getFavorites();
+    isLoading.value = false;
     if (showMessage == true) {
-      Get.showSnackbar(Ui.SuccessSnackBar(message: "List of Services refreshed successfully".tr));
+      Get.showSnackbar(Ui.SuccessSnackBar(
+          message: "List of Services refreshed successfully".tr));
     }
   }
 
   Future getFavorites() async {
     try {
+      isLoading.value = true;
       favorites.assignAll(await _eServiceRepository.getFavorites());
+      isLoading.value = false;
     } catch (e) {
       Get.showSnackbar(Ui.ErrorSnackBar(message: e.toString()));
     }
